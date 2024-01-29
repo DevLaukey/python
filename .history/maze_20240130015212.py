@@ -68,7 +68,7 @@ def depth_first_search(maze, start, goal):
         for r in maze:
             print(' '.join(r))
 
-
+# Example usage
 maze = generate_maze()
 start_point = [(i, row.index('S')) for i, row in enumerate(maze) if 'S' in row][0]
 goal_point = [(i, row.index('G')) for i, row in enumerate(maze) if 'G' in row][0]

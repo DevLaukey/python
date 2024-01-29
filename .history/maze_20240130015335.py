@@ -69,7 +69,24 @@ def depth_first_search(maze, start, goal):
             print(' '.join(r))
 
 
-maze = generate_maze()
+
+def hardcoded_maze():
+    maze = [
+        ['S', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', 'X', '.', 'X', '.', 'X', '.', '.', '.', '.'],
+        ['.', 'X', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', 'X', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', 'X', 'X', 'X', '.', '.'],
+        ['.', '.', '.', 'X', '.', '.', '.', 'X', '.', '.'],
+        ['.', '.', '.', 'X', '.', 'X', '.', '.', '.', '.'],
+        ['.', '.', '.', 'X', '.', '.', '.', '.', 'X', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', 'X', 'G'],
+    ]
+    return maze
+
+
+maze = hardcoded_maze()
 start_point = [(i, row.index('S')) for i, row in enumerate(maze) if 'S' in row][0]
 goal_point = [(i, row.index('G')) for i, row in enumerate(maze) if 'G' in row][0]
 

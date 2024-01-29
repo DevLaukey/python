@@ -36,12 +36,6 @@ def depth_first_search(maze, start, goal):
             visited.add((row, col))
             path.append((row, col))
 
-            # Print the current coordinates and the maze
-            print(f"Visiting: ({row}, {col})")
-            for r in maze:
-                print(' '.join(r))
-            print()
-
             # Explore neighbors in a depth-first manner
             if (dfs_helper(row + 1, col) or dfs_helper(row - 1, col) or
                 dfs_helper(row, col + 1) or dfs_helper(row, col - 1)):
@@ -49,9 +43,6 @@ def depth_first_search(maze, start, goal):
 
             # If the goal is not reached, backtrack and remove the current position from the path
             path.pop()
-        else:
-            # Print why the current coordinates are not visited
-            print(f"Skipping: ({row}, {col}) - Out of bounds or not a free path or already visited")
 
         return False
 
@@ -63,12 +54,10 @@ def depth_first_search(maze, start, goal):
         print("Final Path:")
         for position in path:
             maze[position[0]][position[1]] = 'P'  # Marking the path with 'P'
-
-        # Visualize the final solution
         for r in maze:
             print(' '.join(r))
-
-
+            
+# Example usage
 maze = generate_maze()
 start_point = [(i, row.index('S')) for i, row in enumerate(maze) if 'S' in row][0]
 goal_point = [(i, row.index('G')) for i, row in enumerate(maze) if 'G' in row][0]

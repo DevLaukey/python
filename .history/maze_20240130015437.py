@@ -20,6 +20,20 @@ def generate_maze(size=10, density=0.2):
         maze[obstacle_row][obstacle_col] = 'X'
 
     return maze
+def hardcoded_maze():
+    maze = [
+        ['S', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', 'X', '.', 'X', '.', 'X', '.', '.', '.', '.'],
+        ['.', 'X', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', 'X', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', 'X', 'X', 'X', '.', '.'],
+        ['.', '.', '.', 'X', '.', '.', '.', 'X', '.', '.'],
+        ['.', '.', '.', 'X', '.', 'X', '.', '.', '.', '.'],
+        ['.', '.', '.', 'X', '.', '.', '.', '.', 'X', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.', 'X', 'G'],
+    ]
+    return maze
 
 def depth_first_search(maze, start, goal):
     visited = set()
@@ -36,11 +50,12 @@ def depth_first_search(maze, start, goal):
             visited.add((row, col))
             path.append((row, col))
 
-            # Print the current coordinates and the maze
-            print(f"Visiting: ({row}, {col})")
+            # Visualize the explored paths
+            maze[row][col] = '*'
             for r in maze:
                 print(' '.join(r))
             print()
+            time.sleep(0.1)  # Add a delay for better visualization
 
             # Explore neighbors in a depth-first manner
             if (dfs_helper(row + 1, col) or dfs_helper(row - 1, col) or
@@ -49,9 +64,6 @@ def depth_first_search(maze, start, goal):
 
             # If the goal is not reached, backtrack and remove the current position from the path
             path.pop()
-        else:
-            # Print why the current coordinates are not visited
-            print(f"Skipping: ({row}, {col}) - Out of bounds or not a free path or already visited")
 
         return False
 
@@ -68,8 +80,8 @@ def depth_first_search(maze, start, goal):
         for r in maze:
             print(' '.join(r))
 
-
-maze = generate_maze()
+# Example usage with the corrected hardcoded maze
+maze = hardcoded_maze()
 start_point = [(i, row.index('S')) for i, row in enumerate(maze) if 'S' in row][0]
 goal_point = [(i, row.index('G')) for i, row in enumerate(maze) if 'G' in row][0]
 

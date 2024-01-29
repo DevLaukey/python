@@ -21,26 +21,25 @@ def generate_maze(size=10, density=0.2):
 
     return maze
 
+
 def depth_first_search(maze, start, goal):
     visited = set()
     path = []
 
     def dfs_helper(row, col):
-        nonlocal path
-
         if (row, col) == goal:
-            path.append((row, col))
             return True
 
         if 0 <= row < len(maze) and 0 <= col < len(maze[0]) and maze[row][col] == '.' and (row, col) not in visited:
             visited.add((row, col))
             path.append((row, col))
 
-            # Print the current coordinates and the maze
-            print(f"Visiting: ({row}, {col})")
+            # Visualize the explored paths
+            maze[row][col] = '*'
             for r in maze:
                 print(' '.join(r))
             print()
+            time.sleep(0.1)  # Add a delay for better visualization
 
             # Explore neighbors in a depth-first manner
             if (dfs_helper(row + 1, col) or dfs_helper(row - 1, col) or
@@ -49,9 +48,6 @@ def depth_first_search(maze, start, goal):
 
             # If the goal is not reached, backtrack and remove the current position from the path
             path.pop()
-        else:
-            # Print why the current coordinates are not visited
-            print(f"Skipping: ({row}, {col}) - Out of bounds or not a free path or already visited")
 
         return False
 
@@ -63,11 +59,8 @@ def depth_first_search(maze, start, goal):
         print("Final Path:")
         for position in path:
             maze[position[0]][position[1]] = 'P'  # Marking the path with 'P'
-
-        # Visualize the final solution
         for r in maze:
             print(' '.join(r))
-
 
 maze = generate_maze()
 start_point = [(i, row.index('S')) for i, row in enumerate(maze) if 'S' in row][0]
