@@ -22,10 +22,6 @@ def generate_maze(size=10, density=0.2):
 
     return maze
 
-def heuristic(node, goal):
-    # Manhattan distance heuristic
-    return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
-
 def depth_first_search(maze, start, goal):
     visited = set()
     path = []
@@ -119,6 +115,10 @@ def breadth_first_search(maze, start, goal):
         # Visualize the final BFS solution
         for r in maze:
             print(' '.join(r))
+
+def heuristic(node, goal):
+    # Manhattan distance heuristic
+    return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 
 def astar_search(maze, start, goal):
     visited = set()
