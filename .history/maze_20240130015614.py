@@ -1,6 +1,6 @@
 import random
-import time
 from collections import deque
+
 
 def generate_maze(size=10, density=0.2):
     maze = [['.' for _ in range(size)] for _ in range(size)]
@@ -37,12 +37,11 @@ def depth_first_search(maze, start, goal):
             visited.add((row, col))
             path.append((row, col))
 
-            # Visualize the explored paths
-            maze[row][col] = '*'
+            # Print the current coordinates and the maze
+            print(f"Visiting: ({row}, {col})")
             for r in maze:
                 print(' '.join(r))
             print()
-            time.sleep(0.1)  # Add a delay for better visualization
 
             # Explore neighbors in a depth-first manner
             if (dfs_helper(row + 1, col) or dfs_helper(row - 1, col) or
@@ -51,6 +50,9 @@ def depth_first_search(maze, start, goal):
 
             # If the goal is not reached, backtrack and remove the current position from the path
             path.pop()
+        else:
+            # Print why the current coordinates are not visited
+            print(f"Skipping: ({row}, {col}) - Out of bounds or not a free path or already visited")
 
         return False
 
@@ -59,64 +61,15 @@ def depth_first_search(maze, start, goal):
 
     # Print the final path
     if path:
-        print("Final DFS Path:")
+        print("Final Path:")
         for position in path:
             maze[position[0]][position[1]] = 'P'  # Marking the path with 'P'
 
-        # Visualize the final DFS solution
+        # Visualize the final solution
         for r in maze:
             print(' '.join(r))
 
-def breadth_first_search(maze, start, goal):
-    visited = set()
-    queue = deque([(start[0], start[1])])
-    parent = {}
 
-    def is_valid(row, col):
-        return 0 <= row < len(maze) and 0 <= col < len(maze[0]) and maze[row][col] == '.' and (row, col) not in visited
-
-    while queue:
-        current_row, current_col = queue.popleft()
-        visited.add((current_row, current_col))
-
-        # Visualize the explored paths
-        maze[current_row][current_col] = '*'
-        for r in maze:
-            print(' '.join(r))
-        print()
-
-        if (current_row, current_col) == goal:
-            break
-
-        # Explore neighbors in a breadth-first manner
-        neighbors = [(current_row + 1, current_col), (current_row - 1, current_col),
-                      (current_row, current_col + 1), (current_row, current_col - 1)]
-
-        for neighbor_row, neighbor_col in neighbors:
-            if is_valid(neighbor_row, neighbor_col):
-                queue.append((neighbor_row, neighbor_col))
-                visited.add((neighbor_row, neighbor_col))
-                parent[(neighbor_row, neighbor_col)] = (current_row, current_col)
-
-    # Reconstruct the path from goal to start
-    path = []
-    current = goal
-    while current != start:
-        path.append(current)
-        current = parent[current]
-
-    # Print the final BFS path
-    if path:
-        print("Final BFS Path:")
-        path.reverse()
-        for position in path:
-            maze[position[0]][position[1]] = 'P'  # Marking the path with 'P'
-
-        # Visualize the final BFS solution
-        for r in maze:
-            print(' '.join(r))
-
-# Example usage with the generated maze
 maze = generate_maze()
 start_point = [(i, row.index('S')) for i, row in enumerate(maze) if 'S' in row][0]
 goal_point = [(i, row.index('G')) for i, row in enumerate(maze) if 'G' in row][0]
@@ -126,20 +79,5 @@ for row in maze:
     print(' '.join(row))
 print()
 
-# Run DFS
 print("DFS Solution:")
 depth_first_search(maze, start_point, goal_point)
-
-# Reset maze for BFS
-maze = generate_maze()
-
-print("\n----------------------------------------\n")
-
-print("Initial Maze:")
-for row in maze:
-    print(' '.join(row))
-print()
-
-# Run BFS
-print("BFS Solution:")
-breadth_first_search(maze, start_point, goal_point)
