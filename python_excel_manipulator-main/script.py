@@ -59,7 +59,8 @@ def calculate_revenues(df):
     return calculated_revenues
 
 
-def create_calculations_table(calculated_revenues, overall_df):
+
+def create_calculations_table(calculated_revenues, overall_df, scenario_name):
     # Create a table for calculated revenues
     calculations_table = pd.DataFrame({
         'CALCULATIONS': list(calculated_revenues.columns)[1:],  # Exclude the 'Scenario' column
@@ -88,7 +89,19 @@ def create_calculations_table(calculated_revenues, overall_df):
 
     # Calculate percentage difference
     merged_df['Percentage Difference'] = ((merged_df['Calculated Value'] - merged_df.loc[:, 0]) / merged_df.loc[:, 0]).abs() * 100
-    return merged_df.reset_index(), pd.DataFrame()  # Return an empty DataFrame for overall_details
+
+    # Create a new Excel writer with the scenario_name as the file name
+    with pd.ExcelWriter(f"{scenario_name}_comparison.xlsx", engine='xlsxwriter') as writer:
+        # Add the sheet with the calculations_table
+        calculations_table.to_excel(writer, sheet_name=f"{scenario_name}_comparison", startrow=1, index=False)
+
+        # If there are two scenarios, add an empty sheet for overall_details
+        if len(overall_df) > 0:
+            pd.DataFrame().to_excel(writer, sheet_name="Overall_Details", index=False)
+
+    # Return the merged_df and an empty DataFrame for overall_details
+    return merged_df.reset_index(), pd.DataFrame()
+
 
 def process_scenario(path, scenario_name):
     all_dataframes = []
@@ -116,9 +129,15 @@ def process_scenario(path, scenario_name):
             # Add the sheet with the values
             combined_df.to_excel(writer, sheet_name=scenario_name, index=False)
 
-        print(f"Sheet cleaned up for {scenario_name}.")
+        # Return the calculated tables for the scenario
+        return calculate_revenues(combined_df), pd.DataFrame()
     else:
         print(f"No matching files found for {scenario_name} and '_operations_results_logs.xlsx'.")
+        # Return empty DataFrames to avoid NoneType error
+        return pd.DataFrame(), pd.DataFrame()
+
+
+
 
 def combine_excel_files(path, num_scenarios):
     all_dataframes = []
@@ -148,7 +167,7 @@ def combine_excel_files(path, num_scenarios):
     revenues = calculate_revenues(combined_df)
 
     # Create tables for calculations and overall details
-    calculations_table, overall_details = create_calculations_table(revenues, overall_df)
+    calculations_table, overall_details = create_calculations_table(revenues, overall_df, "Combined")
 
     try:
         with pd.ExcelWriter("combined_comparison.xlsx", engine='xlsxwriter') as writer:
@@ -171,14 +190,15 @@ def combine_excel_files(path, num_scenarios):
                     combined_df_scenario.to_excel(writer, sheet_name=f"{scenario_name[:31]}", index=False)
 
                     # Add the comparison sheet for each scenario
-                    calculations_table_scenario = pd.read_excel(
-                        f"{scenario_name}_comparison.xlsx",
-                        sheet_name=f"{scenario_name[:31]}_comparison"
-                    )
+                    calculations_table_scenario, overall_details_scenario = process_scenario(path, scenario_name)
                     calculations_table_scenario.to_excel(writer, sheet_name=f"{scenario_name[:31]}_comparison", startrow=1, index=False)
+                    
+                    # Add overall_details sheet for each scenario
+                    overall_details_scenario.to_excel(writer, sheet_name=f"{scenario_name[:31]}_comparison", startrow=len(calculations_table_scenario) + 3, index=False)
     except Exception as e:
         print(f"Error creating Excel file: {e}")
-
+        
+        
 if __name__ == "__main__":
     path = input("Enter the path to the directory containing the Excel files: ")
 
